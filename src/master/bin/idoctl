@@ -36,7 +36,11 @@ def cmd_reset(args):
     print 'Cluster resetting is done'
 
 def cmd_start(args):
-    master_mgr = ido.MasterManager()
+    components_version = {
+        'paas-api': '1.0-rc3',
+        'paas-controller': '1.0-rc1'
+    }
+    master_mgr = ido.MasterManager(components_version)
 
     if args.component == 'docker':
         master_mgr.start_docker()
@@ -49,9 +53,9 @@ def cmd_start(args):
     elif args.component == 'heat':
         master_mgr.start_heat()
     elif args.component == 'paas-api':
-        master_mgr.start_paas_api('1.0-rc3')
+        master_mgr.start_paas_api()
     elif args.component == 'paas-controller':
-        master_mgr.start_paas_controller('1.0-rc1')
+        master_mgr.start_paas_controller()
     elif args.component == 'all':
         master_mgr.start()
 

@@ -6,7 +6,7 @@ import urllib2
 import time
 import shutil
 
-def restart_container(container_name, volumns, ports, env_vars, image):
+def restart_container(container_name, image, volumns, ports, env_vars):
     os.system('bash -c \"docker rm -f {} 2>&1\">/dev/null'.format(container_name))
     cmdline = [
         'docker',
@@ -15,10 +15,13 @@ def restart_container(container_name, volumns, ports, env_vars, image):
         '--restart=always',
         '--name={}'.format(container_name)
     ]
-    for key, value in env_vars.items():
-        cmdline += ['-e', '{}={}'.format(key, value)]
-    for item in ports:
-        cmdline += ['-p', item]
+    if env_vars is not None:
+        for key, value in env_vars.items():
+            cmdline += ['-e', '{}={}'.format(key, value)]
+    if ports is not None:
+        for item in ports:
+            cmdline += ['-p', item]
+
     cmdline.append(image)
 
     child = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -130,17 +133,23 @@ def load_config_from_etcd(etcd_client):
         return None
 
 class MasterManager:
-    def __init__(self):
-        self.CLUSTER_CONFIG_FILE = '/etc/ido/master.json'
-        self.IDO_HOME = os.environ['IDO_HOME']
-        self.cluster_config = None
-        self.cluster_config_local = ClusterConfig()
-        self.cluster_config_local.load_from_file(self.CLUSTER_CONFIG_FILE)
-        self.master_ip = self.cluster_config_local.master_ip
-        self.etcd_client = get_etcd_client(self.master_ip)
+    def __init__(self, components_version):
+        try:
+            self.CLUSTER_CONFIG_FILE = '/etc/ido/master.json'
+            self.IDO_HOME = os.environ['IDO_HOME']
+            self.cluster_config = None
+            self.cluster_config_local = ClusterConfig()
+            self.cluster_config_local.load_from_file(self.CLUSTER_CONFIG_FILE)
+            self.master_ip = self.cluster_config_local.master_ip
+            self.etcd_client = get_etcd_client(self.master_ip)
+            self.components_version = components_version
+            self.paas_api_version = components_version['paas-api']
+            self.paas_controller_version = components_version['paas-controller']
 
-        if not os.path.exists('/var/log/ido'):
-            os.makedirs('/var/log/ido')
+            if not os.path.exists('/var/log/ido'):
+                os.makedirs('/var/log/ido')
+        except:
+            raise
 
     def load_config_from_etcd(self):
         if self.cluster_config is not None:
@@ -303,7 +312,7 @@ class MasterManager:
 
         return False
 
-    def start_paas_api(self, paas_api_version):
+    def start_paas_api(self):
         cluster_config = self.load_config_from_etcd()
         env_vars = {
             'DOCKER_REGISTRY_URL': '{}:5000'.format(cluster_config.master_ip),
@@ -317,17 +326,17 @@ class MasterManager:
         ports = {
             '12306:12306',
         }
-        image = '{}/idevops/paas-api:{}'.format(cluster_config.idevopscloud_registry, paas_api_version)
-        return restart_container('paas-api', None, ports, env_vars, image)
+        image = '{}/idevops/paas-api:{}'.format(cluster_config.idevopscloud_registry, self.paas_api_version)
+        return restart_container('paas-api', image, None, ports, env_vars)
 
-    def start_paas_controller(self, version):
+    def start_paas_controller(self):
         cluster_config = self.load_config_from_etcd()
         env_vars = {
             'PAAS_API_SERVER': cluster_config.master_ip,
             'K8S_API_SERVER': 'http://{}:8080/api/v1'.format(cluster_config.master_ip),
             'ETCD_SERVER': cluster_config.master_ip
         }
-        image = '{}/idevops/paas-controller:{}'.format(cluster_config.idevopscloud_registry, version)
+        image = '{}/idevops/paas-controller:{}'.format(cluster_config.idevopscloud_registry, self.paas_controller_version)
         return restart_container('paas-controller',
                                  image,
                                  volumns = None,
