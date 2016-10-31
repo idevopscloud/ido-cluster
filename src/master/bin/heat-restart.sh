@@ -202,7 +202,7 @@ install_heat()
       -v ${PERSIST_DISK}/docker/heat:/root \
       --hostname heat \
       --name heat \
-      -e KEYSTONE_HOST_IP=${keystone} \
+      -e KEYSTONE_HOST_IP=keystone \
       -e HOST_IP=heat \
       -e MYSQL_HOST_IP=mysql \
       -e MYSQL_USER=root \
