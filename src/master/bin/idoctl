@@ -67,7 +67,7 @@ def main(environ, argv):
     parser_reset.set_defaults(func=cmd_reset)
 
     parser_start = subparsers.add_parser('start')
-    parser_start.add_argument('component', choices=['all', 'docker', 'etcd','flannel', 'k8s', 'heat', 'paas-api'])
+    parser_start.add_argument('component', choices=['all', 'docker', 'etcd','flannel', 'k8s', 'heat', 'paas-api', 'paas-controller'])
     parser_start.set_defaults(func=cmd_start)
 
     args = parser.parse_args(sys.argv[1:])
