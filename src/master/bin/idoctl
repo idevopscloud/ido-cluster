@@ -18,7 +18,13 @@ sys.path.insert(0, IDO_HOME + '/lib')
 import ido
 import etcd
 
+components_version = {
+'paas-api': '1.0-rc3',
+'paas-controller': '1.0-rc1'
+}
+
 def cmd_reset(args):
+    global components_version
     if not args.is_force:
         print('Dangerous! All cluster data will be lost.')
         input_str = raw_input('Input your choice y/n: ')
@@ -31,15 +37,12 @@ def cmd_reset(args):
             return False
 
     print 'Start reset cluster ...'
-    master_mgr = ido.MasterManager()
+    master_mgr = ido.MasterManager(components_version)
     master_mgr.reset()
     print 'Cluster resetting is done'
 
 def cmd_start(args):
-    components_version = {
-        'paas-api': '1.0-rc3',
-        'paas-controller': '1.0-rc1'
-    }
+    global components_version
     master_mgr = ido.MasterManager(components_version)
 
     if args.component == 'docker':
