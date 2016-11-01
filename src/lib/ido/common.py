@@ -424,4 +424,6 @@ class NodeManager:
         self.start_flannel()
         self.start_docker()
         self.start_kubernetes_node()
+        self.start_paas_api()
+        self.start_paas_controller()
 
