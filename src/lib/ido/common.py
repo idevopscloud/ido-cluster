@@ -315,7 +315,7 @@ class MasterManager:
     def start_paas_api(self):
         cluster_config = self.load_config_from_etcd()
         env_vars = {
-            'DOCKER_REGISTRY_URL': '{}:5000'.format(cluster_config.master_ip),
+            'DOCKER_REGISTRY_URL': '{}:5000'.format(cluster_config.private_registry),
             'K8S_IP': cluster_config.master_ip,
             'HEAT_IP': cluster_config.master_ip,
             'ETCD_IP': cluster_config.master_ip,
