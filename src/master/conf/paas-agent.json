@@ -16,15 +16,52 @@
         }
       },
       "spec": {
+        "volumes": [
+          {
+            "name": "host-rootfs",
+            "hostPath": {
+              "path": "/"
+            }
+          },
+          {
+            "name": "host-proc",
+            "hostPath": {
+              "path": "/proc"
+            }
+          },
+          {
+            "name": "host-sys",
+            "hostPath": {
+              "path": "/sys"
+            }
+          }
+        ],
         "containers": [
           {
             "name": "paas-agent",
-            "image": "index.idevopscloud.com:5000/idevops/paas-agent:0.8",
+            "image": "index.idevopscloud.com:5000/idevops/paas-agent:0.9.0",
             "ports": [
               {
                 "hostPort": 12305,
                 "containerPort": 12305,
                 "protocol": "TCP"
+              }
+            ],
+            "volumeMounts": [
+              {
+                "mountPath": "/rootfs",
+                "readOnly": true,
+                "name": "host-rootfs"
+              },
+              {
+                "mountPath": "/host/proc",
+                "readOnly": true,
+                "name": "host-proc"
+              },
+              {
+                "mountPath": "/host/sys",
+                "readOnly": true,
+                "name": "host-sys"
               }
             ]
           }
