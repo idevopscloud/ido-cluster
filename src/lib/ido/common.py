@@ -276,6 +276,8 @@ class MasterManager:
         if not self.create_paas_agent():
             print 'Failed to start paas-agent'
         self.start_heat()
+        self.start_paas_api()
+        self.start_paas_controller()
 
     def start_heat(self):
         script_path = self.IDO_HOME + '/bin/heat-restart.sh'
@@ -424,6 +426,4 @@ class NodeManager:
         self.start_flannel()
         self.start_docker()
         self.start_kubernetes_node()
-        self.start_paas_api()
-        self.start_paas_controller()
 

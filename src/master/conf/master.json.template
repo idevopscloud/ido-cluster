@@ -7,12 +7,11 @@
         "subnet_min": "10.10.0.0",
         "subnet_max": "10.10.254.0",
         "backend": {
-            "type": "udp",
-            "port": 7890
+            "type": "vxlan"
         }   
     },
     'private_registry': '172.30.0.10:5000',
-    'idevops_registry': 'ap11.idevopscloud.com:5000'
+    'idevops_registry': 'index.idevopscloud.com:5000'
     "other_registries": [
         "172.30.0.195:5000",
         "172.30.0.20:5000"
