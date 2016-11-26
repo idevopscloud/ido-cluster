@@ -19,8 +19,8 @@ import ido
 import etcd
 
 components_version = {
-'paas-api': '1.0-rc3',
-'paas-controller': '1.0-rc1'
+    'paas-api': '1.1',
+    'paas-controller': '1.1'
 }
 
 def cmd_reset(args):
