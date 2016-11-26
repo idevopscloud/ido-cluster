@@ -332,7 +332,7 @@ class MasterManager:
     def start_paas_controller(self):
         cluster_config = self.load_config_from_etcd()
         env_vars = {
-            'PAAS_API_SERVER': 'http://{}:12306'.format(cluster_config.master_ip)
+            'PAAS_API_SERVER': 'http://{}:12306'.format(cluster_config.master_ip),
             'K8S_API_SERVER': 'http://{}:8080/api/v1'.format(cluster_config.master_ip),
             'ETCD_SERVER': cluster_config.master_ip
         }
