@@ -84,17 +84,18 @@ def start_flannel(cluster_config):
 
 def start_docker(cluster_config=None):
     print 'starting docker'
-    os.system('bash -c \"service docker stop 2>&1\">/dev/null')
+    #os.system('bash -c \"service docker stop 2>&1\">/dev/null')
     kill_process_by_name('docker')
     if not load_flannel_subnet():
         print 'flanneld is not ok'
         return False
     os.system('bash -c \"ip link del docker0 2>&1\n" >/dev/null')
-    cmdline = 'docker -d --bip={subnet} ' \
+    cmdline = '{ido_home}/bin/docker -d --bip={subnet} ' \
               '--mtu={mtu} '\
               '--log-level={log_level} ' \
               '--storage-driver=aufs' \
-              .format(subnet=os.environ['FLANNEL_SUBNET'],
+              .format(ido_home=self.IDO_HOME,
+                      subnet=os.environ['FLANNEL_SUBNET'],
                       mtu=os.environ['FLANNEL_MTU'],
                       log_level = cluster_config.docker_log_level)
     for registry in cluster_config.docker_registries:
