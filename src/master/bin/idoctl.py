@@ -65,6 +65,12 @@ def cmd_start(args):
     elif args.component == 'all':
         master_mgr.start()
 
+def cmd_stop(args):
+    global components_version
+    master_mgr = ido.MasterManager(components_version)
+    if master_mgr.stop():
+        print "master is stopped successfully"
+
 def help(args):
     print 'help command here'
 
@@ -75,6 +81,9 @@ def main(environ, argv):
     parser_reset = subparsers.add_parser('reset')
     parser_reset.add_argument('-f', action="store_true", dest='is_force')
     parser_reset.set_defaults(func=cmd_reset)
+
+    parser_stop = subparsers.add_parser('stop')
+    parser_stop.set_defaults(func=cmd_stop)
 
     parser_start = subparsers.add_parser('start')
     parser_start.add_argument('component', choices=['all', 'docker', 'etcd','flannel', 'k8s', 'heat', 'paas-api', 'paas-controller', 'paas-agent'])

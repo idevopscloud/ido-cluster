@@ -290,8 +290,8 @@ class MasterManager:
         cluster_config = self.load_config_from_etcd()
         os.system('bash {} --registry={}'.format(script_path, cluster_config.idevopscloud_registry))
 
-    def reset(self):
-        os.system('bash -c \"service stop docker 2>&1\">/dev/null')
+    def stop(self):
+        #os.system('bash -c \"service stop docker 2>&1\">/dev/null')
         kill_process_by_name('etcd')
         kill_process_by_name('docker')
         kill_process_by_name('flanneld')
@@ -299,7 +299,13 @@ class MasterManager:
         kill_process_by_name('kube-controller-manager')
         kill_process_by_name('kube-scheduler')
 
-        shutil.rmtree(self.cluster_config_local.etcd_data_path)
+    def reset(self):
+        self.stop()
+
+        try:
+            shutil.rmtree(self.cluster_config_local.etcd_data_path)
+        except:
+            pass
         self.start()
 
     def create_paas_agent(self):
