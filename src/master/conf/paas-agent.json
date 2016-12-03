@@ -39,7 +39,7 @@
         "containers": [
           {
             "name": "paas-agent",
-            "image": "index.idevopscloud.com:5000/idevops/paas-agent:0.9.1",
+            "image": "index.idevopscloud.com:5000/idevops/paas-agent:0.9.2",
             "ports": [
               {
                 "hostPort": 12305,
