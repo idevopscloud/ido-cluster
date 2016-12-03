@@ -20,7 +20,8 @@ import etcd
 
 components_version = {
     'paas-api': '1.1',
-    'paas-controller': '1.1'
+    'paas-controller': '1.1',
+    'paas-agent': '0.9.2',
 }
 
 def cmd_reset(args):
@@ -59,6 +60,8 @@ def cmd_start(args):
         master_mgr.start_paas_api()
     elif args.component == 'paas-controller':
         master_mgr.start_paas_controller()
+    elif args.component == 'paas-agent':
+        master_mgr.start_paas_agent()
     elif args.component == 'all':
         master_mgr.start()
 
@@ -74,7 +77,7 @@ def main(environ, argv):
     parser_reset.set_defaults(func=cmd_reset)
 
     parser_start = subparsers.add_parser('start')
-    parser_start.add_argument('component', choices=['all', 'docker', 'etcd','flannel', 'k8s', 'heat', 'paas-api', 'paas-controller'])
+    parser_start.add_argument('component', choices=['all', 'docker', 'etcd','flannel', 'k8s', 'heat', 'paas-api', 'paas-controller', 'paas-agent'])
     parser_start.set_defaults(func=cmd_start)
 
     args = parser.parse_args(sys.argv[1:])

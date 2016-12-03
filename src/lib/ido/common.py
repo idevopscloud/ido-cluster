@@ -21,6 +21,9 @@ def restart_container(container_name, image, volumns, ports, env_vars):
     if ports is not None:
         for item in ports:
             cmdline += ['-p', item]
+    if volumns is not None:
+        for key, value in volumns.items():
+            cmdline += ['-v', '{}:{}'.format(key, value)]
 
     cmdline.append(image)
 
@@ -145,6 +148,7 @@ class MasterManager:
             self.components_version = components_version
             self.paas_api_version = components_version['paas-api']
             self.paas_controller_version = components_version['paas-controller']
+            self.paas_agent_version = components_version['paas-agent']
 
             if not os.path.exists('/var/log/ido'):
                 os.makedirs('/var/log/ido')
@@ -278,6 +282,7 @@ class MasterManager:
         self.start_heat()
         self.start_paas_api()
         self.start_paas_controller()
+        self.start_paas_agent()
 
     def start_heat(self):
         script_path = self.IDO_HOME + '/bin/heat-restart.sh'
@@ -344,6 +349,23 @@ class MasterManager:
                                  volumns = None,
                                  ports = None,
                                  env_vars = env_vars)
+
+    def start_paas_agent(self):
+        cluster_config = self.load_config_from_etcd()
+        volumns = {
+            '/proc': '/host/proc:ro',
+            '/sys': '/host/sys:ro',
+            '/': '/rootfs:ro',
+        }
+        ports = {
+            '22305:12305',
+        }
+        image = '{}/idevops/paas-agent:{}'.format(cluster_config.idevopscloud_registry, self.paas_agent_version)
+        return restart_container('paas-agent',
+                                 image,
+                                 volumns = volumns,
+                                 ports = ports,
+                                 env_vars = None)
 
 class NodeManager:
     def __init__(self):
