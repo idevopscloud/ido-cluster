@@ -1,5 +1,5 @@
 #!/bin/bash
-export PATH=/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin
+export PATH=/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:${IDO_MASTER_HOME}/bin
 export WORKDIR=$( cd ` dirname $0 ` && pwd )
 cd "$WORKDIR" || exit 1
 
