@@ -19,7 +19,7 @@ import ido
 import etcd
 
 components_version = {
-    'paas-api': '1.1',
+    'paas-api': '1.1.1',
     'paas-controller': '1.1',
     'paas-agent': '0.9.2',
 }
