@@ -280,7 +280,7 @@ done
 img_mysql=${registry}/idevops/mysql:5.5
 img_rabbitmq=${registry}/idevops/rabbitmq:3.6.1
 img_keystone=${registry}/idevops/keystone:juno
-img_heat=${registry}/idevops/heat:kilo-k8s-1.2.2
+img_heat=${registry}/idevops/heat:kilo-k8s-1.2.3
 
 my_ip=$(get_my_ip)
 
