@@ -8,13 +8,13 @@ import time
 import argparse
 import urllib2
 
-if 'IDO_HOME' not in os.environ:
-    print 'Environment variable <IDO_HOME> is not set'
+if 'IDO_NODE_HOME' not in os.environ:
+    print 'Environment variable <IDO_NODE_HOME> is not set'
     sys.exit(1)
 else:
-    IDO_HOME = os.environ['IDO_HOME']
+    IDO_NODE_HOME = os.environ['IDO_NODE_HOME']
 
-sys.path.append(IDO_HOME + '/lib')
+sys.path.append(IDO_NODE_HOME + '/lib')
 import ido
 import etcd
 
