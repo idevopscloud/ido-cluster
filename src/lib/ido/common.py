@@ -135,3 +135,18 @@ def load_config_from_etcd(etcd_client):
     except:
         return None
 
+def is_image_existed(image_name, image_tag):
+    cmdline = [
+        'bash',
+        '-c',
+        'docker images | grep gcr.io/google_containers/pause | awk \'{print $1,$2;\'}'
+    ]
+    child = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    child.wait()
+    import pdb
+    pdb.set_trace()
+    if len(child.stdout.readlines()) == 0:
+        return False
+
+    return True
+

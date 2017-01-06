@@ -2,6 +2,7 @@ from .common import *
 import subprocess
 from config import *
 import etcd
+import os
 
 class NodeManager:
     def __init__(self):
@@ -76,9 +77,15 @@ class NodeManager:
     def start_docker(self):
         if self.cluster_config.master_ip != self.node_config_local.node_ip:
             start_docker(self.IDO_NODE_HOME + '/bin/docker', self.cluster_config)
+        self.__pull_google_pause()
 
     def start(self):
         self.start_flannel()
         self.start_docker()
         self.start_kubernetes_node()
+
+    def __pull_google_pause(self):
+        if not is_image_existed('gcr.io/google_containers/pause', '2.0'):
+            os.system('docker pull {}/idevops/pause:2.0'.format(self.cluster_config.idevopscloud_registry))
+            os.system('docker tag {}/idevops/pause:2.0 gcr.io/google_containers/pause:2.0'.format(self.cluster_config.idevopscloud_registry))
 
