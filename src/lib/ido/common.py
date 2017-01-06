@@ -143,8 +143,6 @@ def is_image_existed(image_name, image_tag):
     ]
     child = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     child.wait()
-    import pdb
-    pdb.set_trace()
     if len(child.stdout.readlines()) == 0:
         return False
 
