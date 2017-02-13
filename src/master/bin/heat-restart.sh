@@ -3,6 +3,8 @@ export PATH=/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:${IDO_M
 export WORKDIR=$( cd ` dirname $0 ` && pwd )
 cd "$WORKDIR" || exit 1
 
+PYPI_MIRROR="http://pypi.douban.com/simple"
+
 get_my_ip()
 {
     my_ip=$(ip route get 1.0.0.0 | head -1 | cut -d' ' -f8)
@@ -129,16 +131,10 @@ wait_for_service_ready()
             if [ $attempt -gt 1 ]; then
                 echo ""
             fi
-            echo "attempt ${attempt}: [$PORT running]"
+            #echo "attempt ${attempt}: [$PORT running]"
             break
         fi
-        if [ $attempt -gt 1 ]; then
-            for (( i=1; i<10; i++ ));
-            do
-                echo -en "\b\b\b\b\b\b\b\b"
-            done
-        fi
-        echo -n "attempt ${attempt}: [$PORT not working yet]"
+        #echo -n "attempt ${attempt}: [$PORT not working yet]"
         attempt=$(($attempt+1))
         sleep 2
     done
@@ -188,6 +184,7 @@ install_keystone()
         -p 5001:5001 \
         --name keystone -h ${my_ip} ${img_keystone})
     wait_for_service_ready $container_id 35357
+    echo 'installed keystone'
 }
 
 install_heat()
@@ -216,15 +213,13 @@ install_heat()
       -e ETC_HOSTS="${hosts_conf}" \
       -d ${img_heat})
     wait_for_service_ready $container_id 8004
+    echo 'installed heat'
 }
 
 install_heatclient()
 {
     if ! which heat 2>&1 > /dev/null; then
-        echo 'Will install heat client...'
-        echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/kilo main" > /etc/apt/sources.list.d/cloudarchive-kilo.list
-        apt-get update > /dev/null 2>&1
-        apt-get install -y --force-yes python-heatclient > /dev/null
+        python -mpip install -i ${PYPI_MIRROR} --trusted-host pypi.douban.com -v python-heatclient==0.3.0
     fi
 
     HEAT_RC=/root/heatrc
