@@ -147,6 +147,7 @@ class MasterManager:
         self.start_kubernetes_master()
         if not self.create_paas_agent():
             print 'Failed to start paas-agent'
+
         self.start_heat()
 
         if not self.start_paas_api():
@@ -157,6 +158,8 @@ class MasterManager:
 
         if not self.start_paas_agent():
             return False
+
+        print 'ido-master started successfully'
 
     def start_heat(self):
         script_path = self.IDO_MASTER_HOME + '/bin/heat-restart.sh'

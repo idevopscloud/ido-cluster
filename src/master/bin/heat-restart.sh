@@ -142,7 +142,7 @@ wait_for_service_ready()
 
 install_mysql()
 {
-    echo "installing ${img_mysql}"
+    echo "installing mysql"
     mysql_id=$(docker run --name mysql -h mysql \
         -v ${PERSIST_DISK}/docker/mysql:/var/lib/mysql \
         -e MYSQL_ROOT_PASSWORD=Letmein123 \
@@ -156,12 +156,12 @@ install_mysql()
         echo "Failed to start mysql server"
         return 1
     fi
-    echo 'intalled mysql'
+    echo "intalled mysql"
 }
 
 install_rabbitmq()
 {
-    echo "installing ${img_rabbitmq}"
+    echo "installing rabbitmq"
     docker run -d \
         --hostname rabbitmq \
         --name rabbitmq \
@@ -169,12 +169,12 @@ install_rabbitmq()
         ${img_rabbitmq} > /dev/null
     echo 'sleep 5s to ensure rabbitmq is ready..'
     sleep 5 
-    echo 'installed rabbitmq'
+    echo "installed rabbitmq"
 }
 
 install_keystone()
 {
-    echo "installing ${img_keystone}"
+    echo "installing keystone"
     container_id=$(docker run -d \
         --link mysql:mysql\
         -e OS_TENANT_NAME=admin \
@@ -184,12 +184,12 @@ install_keystone()
         -p 5001:5001 \
         --name keystone -h ${my_ip} ${img_keystone})
     wait_for_service_ready $container_id 35357
-    echo 'installed keystone'
+    echo "installed keystone"
 }
 
 install_heat()
 {
-    echo "installing ${img_heat}"
+    echo "installing heat"
     container_id=$(docker run \
       -p 8004:8004 \
       --link mysql:mysql\
@@ -213,7 +213,7 @@ install_heat()
       -e ETC_HOSTS="${hosts_conf}" \
       -d ${img_heat})
     wait_for_service_ready $container_id 8004
-    echo 'installed heat'
+    echo "installed heat"
 }
 
 install_heatclient()
