@@ -37,7 +37,7 @@ is_container_alive()
 is_container_existed()
 {
     container_id=$1
-    docker inspect --format {{.State.Status}} $container_id 2>&1>/dev/null
+    docker inspect --format {{.State.Status}} $container_id >/dev/null 2>&1
     if [ $? == 0 ]; then
         return 0
     fi
@@ -67,7 +67,7 @@ pull_imgs()
 {
     imgs="$img_mysql $img_rabbitmq $img_keystone $img_heat"
     for img in $imgs;do
-        docker inspect $img 2>&1>/dev/null
+        docker inspect $img >/dev/null 2>&1
         if (( 0 != $? )); then
             echo "pulling $img..."
             docker pull $img
@@ -233,7 +233,7 @@ install_heatclient()
 
     sed -i '/heatrc/d' /root/.bashrc
     echo ". ${HEAT_RC}" >> /root/.bashrc
-    env | grep "^OS_"
+    #env | grep "^OS_"
 
     #heat resource-type-list | grep Google
     #heat stack-list

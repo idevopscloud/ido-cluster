@@ -148,9 +148,15 @@ class MasterManager:
         if not self.create_paas_agent():
             print 'Failed to start paas-agent'
         self.start_heat()
-        self.start_paas_api()
-        self.start_paas_controller()
-        self.start_paas_agent()
+
+        if not self.start_paas_api():
+            return False
+
+        if not self.start_paas_controller():
+            return False
+
+        if not self.start_paas_agent():
+            return False
 
     def start_heat(self):
         script_path = self.IDO_MASTER_HOME + '/bin/heat-restart.sh'
@@ -194,6 +200,7 @@ class MasterManager:
         return False
 
     def start_paas_api(self):
+        print 'Starting paas-api'
         cluster_config = self.load_config_from_etcd()
         env_vars = {
             'DOCKER_REGISTRY_URL': '{}'.format(cluster_config.private_registry),
@@ -208,9 +215,15 @@ class MasterManager:
             '12306:12306',
         }
         image = '{}/idevops/paas-api:{}'.format(cluster_config.idevopscloud_registry, self.paas_api_version)
-        return restart_container('paas-api', image, None, ports, env_vars)
+        status = restart_container('paas-api', image, None, ports, env_vars)
+        if status:
+            print 'Paas-api started successfully'
+        else:
+            print 'Failed to start paas-api'
+        return status
 
     def start_paas_controller(self):
+        print 'Staring paas-controller'
         cluster_config = self.load_config_from_etcd()
         env_vars = {
             'PAAS_API_SERVER': 'http://{}:12306'.format(cluster_config.master_ip),
@@ -218,13 +231,19 @@ class MasterManager:
             'ETCD_SERVER': cluster_config.master_ip
         }
         image = '{}/idevops/paas-controller:{}'.format(cluster_config.idevopscloud_registry, self.paas_controller_version)
-        return restart_container('paas-controller',
-                                 image,
-                                 volumns = None,
-                                 ports = None,
-                                 env_vars = env_vars)
+        status = restart_container('paas-controller',
+                                    image,
+                                    volumns = None,
+                                    ports = None,
+                                    env_vars = env_vars)
+        if status:
+            print 'paas-controller started successfully'
+        else:
+            print 'Failed to start paas-controller'
+        return status
 
     def start_paas_agent(self):
+        print 'Starting paas-agent'
         cluster_config = self.load_config_from_etcd()
         volumns = {
             '/proc': '/host/proc:ro',
@@ -235,9 +254,14 @@ class MasterManager:
             '22305:12305',
         }
         image = '{}/idevops/paas-agent:{}'.format(cluster_config.idevopscloud_registry, self.paas_agent_version)
-        return restart_container('paas-agent',
-                                 image,
-                                 volumns = volumns,
-                                 ports = ports,
-                                 env_vars = None)
+        status = restart_container('paas-agent',
+                                   image,
+                                   volumns = volumns,
+                                   ports = ports,
+                                   env_vars = None)
+        if status:
+            print 'paas-agent started successfully'
+        else:
+            print 'Failed to start paas-agent'
+        return status
 
